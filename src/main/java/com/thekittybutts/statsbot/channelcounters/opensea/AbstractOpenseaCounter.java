@@ -27,7 +27,7 @@ public abstract class AbstractOpenseaCounter {
             currentValue = value;
             String formattedValue = String.format(Locale.US, floatFormat, value);
             logger.info("Updating {} [{}]", name, formattedValue);
-            String s = String.format("[%s] %s", formattedValue, name);
+            String s = String.format("%s: %s", name, formattedValue);
             Optional.of(bot)
                     .map(Bot::getJDA)
                     .map(jda -> jda.getVoiceChannelById(voiceChannelID))

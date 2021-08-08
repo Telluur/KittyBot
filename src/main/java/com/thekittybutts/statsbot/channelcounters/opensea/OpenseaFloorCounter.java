@@ -5,7 +5,7 @@ import com.thekittybutts.statsbot.Bot;
 public class OpenseaFloorCounter extends AbstractOpenseaCounter {
     private static final String NAME = "Floor";
     private static final String VOICE_ID = "873723449363824650";
-    private static final String FLOAT_FORMAT = "%.3f Ξ";
+    private static final String FLOAT_FORMAT = "%.3fΞ";
 
     protected OpenseaFloorCounter(Bot bot) {
         super(bot, NAME, VOICE_ID);

@@ -26,7 +26,7 @@ public abstract class AbstractChannelCounter implements Runnable {
         if (currentValue != value) {
             currentValue = value;
             logger.info("Updating {} [{}]", name, value);
-            String s = String.format("[%d] %s", value, name);
+            String s = String.format("%s: %d", name, value);
             Optional.of(bot)
                     .map(Bot::getJDA)
                     .map(jda -> jda.getVoiceChannelById(voiceChannelID))
@@ -36,5 +36,4 @@ public abstract class AbstractChannelCounter implements Runnable {
                             () -> logger.error("Failed to update counter {}", name));
         }
     }
-
 }
