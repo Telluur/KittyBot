@@ -1,8 +1,9 @@
 package com.thekittybutts.statsbot;
 
-import com.thekittybutts.statsbot.channelcounters.DiscordMemberCounter;
-import com.thekittybutts.statsbot.channelcounters.OnlineDiscordMemberCounter;
-import com.thekittybutts.statsbot.channelcounters.TwitterFollowerCounter;
+import com.thekittybutts.statsbot.channelcounters.discord.DiscordMemberCounter;
+import com.thekittybutts.statsbot.channelcounters.discord.DiscordOnlineMemberCounter;
+import com.thekittybutts.statsbot.channelcounters.opensea.OpenseaRunnable;
+import com.thekittybutts.statsbot.channelcounters.twitter.TwitterFollowerCounter;
 import lombok.Getter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.events.ReadyEvent;
@@ -37,7 +38,6 @@ public class Bot extends ListenerAdapter {
         logger.info("JDA API ready");
         this.JDA = event.getJDA();
 
-
         /*
         Rate limit on major API endpoints in discord are 2 every 10 minutes.
         We schedule our intervals at 6 minutes per call.
@@ -51,17 +51,21 @@ public class Bot extends ListenerAdapter {
         counterSchedules.add(ssf);
         */
 
-        DiscordMemberCounter dc = new DiscordMemberCounter(this);
-        ScheduledFuture<?> dsf = ses.scheduleAtFixedRate(dc, 0, 6, TimeUnit.MINUTES);
-        counterSchedules.add(dsf);
+        DiscordMemberCounter dmc = new DiscordMemberCounter(this);
+        ScheduledFuture<?> dmcFuture = ses.scheduleAtFixedRate(dmc, 0, 6, TimeUnit.MINUTES);
+        counterSchedules.add(dmcFuture);
 
-        TwitterFollowerCounter tc = new TwitterFollowerCounter(this);
-        ScheduledFuture<?> tsf = ses.scheduleAtFixedRate(tc, 0, 6, TimeUnit.MINUTES);
-        counterSchedules.add(tsf);
+        DiscordOnlineMemberCounter domc = new DiscordOnlineMemberCounter(this);
+        ScheduledFuture<?> domcFuture = ses.scheduleAtFixedRate(domc, 0, 6, TimeUnit.MINUTES);
+        counterSchedules.add(domcFuture);
 
-        OnlineDiscordMemberCounter oc = new OnlineDiscordMemberCounter(this);
-        ScheduledFuture<?> osf = ses.scheduleAtFixedRate(oc, 0, 6, TimeUnit.MINUTES);
-        counterSchedules.add(osf);
+        TwitterFollowerCounter tfc = new TwitterFollowerCounter(this);
+        ScheduledFuture<?> tfcFuture = ses.scheduleAtFixedRate(tfc, 0, 6, TimeUnit.MINUTES);
+        counterSchedules.add(tfcFuture);
+
+        OpenseaRunnable or = new OpenseaRunnable(this);
+        ScheduledFuture<?> orFuture = ses.scheduleAtFixedRate(or, 0, 6, TimeUnit.MINUTES);
+        counterSchedules.add(orFuture);
     }
 
     @Override

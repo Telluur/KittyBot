@@ -1,7 +1,8 @@
-package com.thekittybutts.statsbot.channelcounters;
+package com.thekittybutts.statsbot.channelcounters.twitter;
 
 import com.thekittybutts.statsbot.Bot;
 import com.thekittybutts.statsbot.Config;
+import com.thekittybutts.statsbot.channelcounters.AbstractChannelCounter;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;

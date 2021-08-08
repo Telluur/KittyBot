@@ -1,32 +1,33 @@
-package com.thekittybutts.statsbot.channelcounters;
+package com.thekittybutts.statsbot.channelcounters.opensea;
 
 import com.thekittybutts.statsbot.Bot;
 import net.dv8tion.jda.api.entities.GuildChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Locale;
 import java.util.Optional;
 
-
-public abstract class AbstractChannelCounter implements Runnable {
+public abstract class AbstractOpenseaCounter {
     protected static final Logger logger = LoggerFactory.getLogger("COUNTER");
+
     protected final Bot bot;
     protected final String name;
     protected final String voiceChannelID;
-    protected int currentValue = 0;
+    protected float currentValue = 0;
 
-
-    protected AbstractChannelCounter(Bot bot, String name, String voiceChannelID) {
+    protected AbstractOpenseaCounter(Bot bot, String name, String voiceChannelID) {
         this.bot = bot;
         this.voiceChannelID = voiceChannelID;
         this.name = name;
     }
 
-    protected void updateCounter(int value) {
+    protected void updateCounter(float value, String floatFormat) {
         if (currentValue != value) {
             currentValue = value;
-            logger.info("Updating {} [{}]", name, value);
-            String s = String.format("[%d] %s", value, name);
+            String formattedValue = String.format(Locale.US, floatFormat, value);
+            logger.info("Updating {} [{}]", name, formattedValue);
+            String s = String.format("[%s] %s", formattedValue, name);
             Optional.of(bot)
                     .map(Bot::getJDA)
                     .map(jda -> jda.getVoiceChannelById(voiceChannelID))
@@ -36,5 +37,4 @@ public abstract class AbstractChannelCounter implements Runnable {
                             () -> logger.error("Failed to update counter {}", name));
         }
     }
-
 }

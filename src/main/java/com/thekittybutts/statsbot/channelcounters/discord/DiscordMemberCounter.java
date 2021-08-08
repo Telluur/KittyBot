@@ -1,6 +1,7 @@
-package com.thekittybutts.statsbot.channelcounters;
+package com.thekittybutts.statsbot.channelcounters.discord;
 
 import com.thekittybutts.statsbot.Bot;
+import com.thekittybutts.statsbot.channelcounters.AbstractChannelCounter;
 import net.dv8tion.jda.api.entities.GuildChannel;
 
 import java.util.Optional;
