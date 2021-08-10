@@ -17,12 +17,17 @@ public class DiscordMemberCounter extends AbstractChannelCounter {
 
     @Override
     public void run() {
-        Optional.of(bot)
-                .map(Bot::getJDA)
-                .map(jda -> jda.getVoiceChannelById(VOICE_ID))
-                .map(GuildChannel::getGuild)
-                .ifPresentOrElse(
-                        guild -> updateCounter(guild.getMemberCount()),
-                        () -> logger.error("Failed to fetch discord member count"));
+        try {
+            logger.info("Running Discord Member Query");
+            Optional.of(bot)
+                    .map(Bot::getJDA)
+                    .map(jda -> jda.getVoiceChannelById(VOICE_ID))
+                    .map(GuildChannel::getGuild)
+                    .ifPresentOrElse(
+                            guild -> updateCounter(guild.getMemberCount()),
+                            () -> logger.error("Discord Exception: Failed to fetch discord member count"));
+        } catch (Exception e) {
+            logger.error("Discord Exception: ", e);
+        }
     }
 }

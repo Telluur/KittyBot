@@ -4,7 +4,6 @@ import com.thekittybutts.statsbot.Bot;
 import com.thekittybutts.statsbot.Config;
 import com.thekittybutts.statsbot.channelcounters.AbstractChannelCounter;
 import twitter4j.Twitter;
-import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.conf.ConfigurationBuilder;
 
@@ -30,12 +29,13 @@ public class TwitterFollowerCounter extends AbstractChannelCounter {
 
     @Override
     public void run() {
-        Twitter twitter = twitterFactory.getInstance();
         try {
+            logger.info("Running Twitter Query");
+            Twitter twitter = twitterFactory.getInstance();
             int followersCount = twitter.showUser(TWITTER_HANDLE).getFollowersCount();
             updateCounter(followersCount);
-        } catch (TwitterException e) {
-            logger.error(e.getErrorMessage());
+        } catch (Exception e) {
+            logger.error("Twitter Exception: ", e);
         }
     }
 }

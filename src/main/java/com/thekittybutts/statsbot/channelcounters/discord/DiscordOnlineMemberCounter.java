@@ -20,16 +20,21 @@ public class DiscordOnlineMemberCounter extends AbstractChannelCounter {
 
     @Override
     public void run() {
-        Optional.of(bot)
-                .map(Bot::getJDA)
-                .map(jda -> jda.getGuildById(GUILD_ID))
-                .map(Guild::getMembers)
-                .ifPresentOrElse(
-                        members -> {
-                            int count = (int) members.stream().filter(member -> !member.getUser().isBot() && onlineSet.contains(member.getOnlineStatus())).count();
-                            updateCounter(count);
-                        },
-                        () -> logger.error("Failed to fetch discord member count")
-                );
+        try {
+            logger.info("Running Discord Online Member Query");
+            Optional.of(bot)
+                    .map(Bot::getJDA)
+                    .map(jda -> jda.getGuildById(GUILD_ID))
+                    .map(Guild::getMembers)
+                    .ifPresentOrElse(
+                            members -> {
+                                int count = (int) members.stream().filter(member -> !member.getUser().isBot() && onlineSet.contains(member.getOnlineStatus())).count();
+                                updateCounter(count);
+                            },
+                            () -> logger.error("Discord Exception: Failed to fetch online discord member count")
+                    );
+        } catch (Exception e) {
+            logger.error("Discord Exception: ", e);
+        }
     }
 }

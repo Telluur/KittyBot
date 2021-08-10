@@ -7,8 +7,6 @@ import okhttp3.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-
 public class OpenseaRunnable implements Runnable {
     public static final MediaType MEDIA_TYPE = MediaType.get("application/json; charset=utf-8");
     protected static final Logger logger = LoggerFactory.getLogger("COUNTER");
@@ -28,6 +26,8 @@ public class OpenseaRunnable implements Runnable {
     @Override
     public void run() {
         try {
+            logger.info("Running Opensea Query");
+
             //Single graphql query for both counters
             OkHttpClient client = new OkHttpClient();
             RequestBody body = RequestBody.create(JSON_REQUEST, MEDIA_TYPE);
@@ -36,14 +36,16 @@ public class OpenseaRunnable implements Runnable {
                     .post(body)
                     .build();
             Response response = client.newCall(request).execute();
-            GraphQLResponse graphQLResponse = new Gson().fromJson(response.body().string(), GraphQLResponse.class);
+            String jsonResponse = response.body().string();
+            logger.info("Opensea response: {}", jsonResponse);
 
             //Update individual counters
+            GraphQLResponse graphQLResponse = new Gson().fromJson(jsonResponse, GraphQLResponse.class);
             floorCounter.updateCounter(graphQLResponse.getData().getCollection().getStats().getFloorPrice());
             volumeCounter.updateCounter(graphQLResponse.getData().getCollection().getStats().getTotalVolume());
             ownerCounter.updateCounter(graphQLResponse.getData().getCollection().getStats().getNumOwners());
-        } catch (IOException | NullPointerException e) {
-            logger.error(e.getMessage());
+        } catch (Exception e) {
+            logger.error("Opensea Exception: ", e);
         }
     }
 }
