@@ -3,20 +3,20 @@ package com.thekittybutts.statsbot.channelcounters;
 import com.thekittybutts.statsbot.Bot;
 import net.dv8tion.jda.api.entities.GuildChannel;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
 
 public abstract class AbstractChannelCounter implements Runnable {
-    protected static final Logger logger = LoggerFactory.getLogger("COUNTER");
+    protected final Logger logger;
     protected final Bot bot;
     protected final String name;
     protected final String voiceChannelID;
     protected int currentValue = 0;
 
 
-    protected AbstractChannelCounter(Bot bot, String name, String voiceChannelID) {
+    protected AbstractChannelCounter(Logger logger, Bot bot, String name, String voiceChannelID) {
+        this.logger = logger;
         this.bot = bot;
         this.voiceChannelID = voiceChannelID;
         this.name = name;
@@ -33,7 +33,7 @@ public abstract class AbstractChannelCounter implements Runnable {
                     .map(GuildChannel::getManager)
                     .ifPresentOrElse(
                             channelManager -> channelManager.setName(s).queue(),
-                            () -> logger.error("Failed to update counter {}", name));
+                            () -> logger.error("Failed to update channel {}", name));
         }
     }
 }

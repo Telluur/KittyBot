@@ -9,12 +9,12 @@ import java.util.Locale;
 import java.util.Optional;
 
 public abstract class AbstractOpenseaCounter {
-    protected static final Logger logger = LoggerFactory.getLogger("COUNTER");
+    protected static final Logger logger = LoggerFactory.getLogger("OPENSEA");
 
     protected final Bot bot;
     protected final String name;
     protected final String voiceChannelID;
-    protected float currentValue = 0;
+    protected String currentFormatted = "";
 
     protected AbstractOpenseaCounter(Bot bot, String name, String voiceChannelID) {
         this.bot = bot;
@@ -23,18 +23,18 @@ public abstract class AbstractOpenseaCounter {
     }
 
     protected void updateCounter(float value, String floatFormat) {
-        if (currentValue != value) {
-            currentValue = value;
-            String formattedValue = String.format(Locale.US, floatFormat, value);
-            logger.info("Updating {} [{}]", name, formattedValue);
-            String s = String.format("%s: %s", name, formattedValue);
+        String newFormatted = String.format(Locale.US, floatFormat, value);
+        if (!currentFormatted.equals(newFormatted)) {
+            currentFormatted = newFormatted;
+            logger.info("Updating {} [{}]", name, newFormatted);
+            String s = String.format("%s: %s", name, newFormatted);
             Optional.of(bot)
                     .map(Bot::getJDA)
                     .map(jda -> jda.getVoiceChannelById(voiceChannelID))
                     .map(GuildChannel::getManager)
                     .ifPresentOrElse(
                             channelManager -> channelManager.setName(s).queue(),
-                            () -> logger.error("Failed to update counter {}", name));
+                            () -> logger.error("Failed to update channel {}", name));
         }
     }
 }

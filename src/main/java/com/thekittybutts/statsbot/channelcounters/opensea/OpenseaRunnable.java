@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 public class OpenseaRunnable implements Runnable {
     public static final MediaType MEDIA_TYPE = MediaType.get("application/json; charset=utf-8");
-    protected static final Logger logger = LoggerFactory.getLogger("COUNTER");
+    protected static final Logger logger = LoggerFactory.getLogger("OPENSEA");
     private static final String OPENSEA_COLLECTION_SLUG = "the-kittybutts";
     private static final String URL = "https://api.opensea.io/graphql/";
     private static final String JSON_REQUEST = String.format("{\"query\": \"{\\n  collection(slug: \\\"%s\\\") {\\n    stats{\\n      floorPrice\\n      totalVolume\\n      numOwners\\n    }\\n  }\\n}\",\"variables\":null}", OPENSEA_COLLECTION_SLUG);
@@ -26,7 +26,7 @@ public class OpenseaRunnable implements Runnable {
     @Override
     public void run() {
         try {
-            logger.info("Running Opensea Query");
+            logger.info("Running Query");
 
             //Single graphql query for both counters
             OkHttpClient client = new OkHttpClient();
@@ -37,7 +37,7 @@ public class OpenseaRunnable implements Runnable {
                     .build();
             Response response = client.newCall(request).execute();
             String jsonResponse = response.body().string();
-            logger.info("Opensea response: {}", jsonResponse);
+            logger.info("Response: {}", jsonResponse);
 
             //Update individual counters
             GraphQLResponse graphQLResponse = new Gson().fromJson(jsonResponse, GraphQLResponse.class);
@@ -45,7 +45,7 @@ public class OpenseaRunnable implements Runnable {
             volumeCounter.updateCounter(graphQLResponse.getData().getCollection().getStats().getTotalVolume());
             ownerCounter.updateCounter(graphQLResponse.getData().getCollection().getStats().getNumOwners());
         } catch (Exception e) {
-            logger.error("Opensea Exception: ", e);
+            logger.error("Exception: ", e);
         }
     }
 }
