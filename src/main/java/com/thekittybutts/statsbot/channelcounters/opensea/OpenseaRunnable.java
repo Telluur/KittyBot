@@ -12,7 +12,7 @@ public class OpenseaRunnable implements Runnable {
     protected static final Logger logger = LoggerFactory.getLogger("OPENSEA");
     private static final String OPENSEA_COLLECTION_SLUG = "the-kittybutts";
     private static final String URL = "https://api.opensea.io/graphql/";
-    private static final String JSON_REQUEST = String.format("{\"query\": \"{\\n  collection(slug: \\\"%s\\\") {\\n    stats{\\n      floorPrice\\n      totalVolume\\n      numOwners\\n    }\\n  }\\n}\",\"variables\":null}", OPENSEA_COLLECTION_SLUG);
+    private static final String JSON_REQUEST = String.format("{\"query\": \"{\\n  collection(slug: \\\"%s\\\") {\\n floorPrice \\n stats{\\n      floorPrice\\n      totalVolume\\n      numOwners\\n    }\\n  }\\n}\",\"variables\":null}", OPENSEA_COLLECTION_SLUG);
     private final OpenseaFloorCounter floorCounter;
     private final OpenseaVolumeCounter volumeCounter;
     private final OpenseaOwnerCounter ownerCounter;
@@ -41,7 +41,7 @@ public class OpenseaRunnable implements Runnable {
 
             //Update individual counters
             GraphQLResponse graphQLResponse = new Gson().fromJson(jsonResponse, GraphQLResponse.class);
-            floorCounter.updateCounter(graphQLResponse.getData().getCollection().getStats().getFloorPrice());
+            floorCounter.updateCounter(graphQLResponse.getData().getCollection().getFloorPrice());
             volumeCounter.updateCounter(graphQLResponse.getData().getCollection().getStats().getTotalVolume());
             ownerCounter.updateCounter(graphQLResponse.getData().getCollection().getStats().getNumOwners());
         } catch (Exception e) {

@@ -4,5 +4,6 @@ import lombok.Data;
 
 @Data
 public class Collection {
+    private float floorPrice;
     private Stats stats;
 }
